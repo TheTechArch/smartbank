@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36212.18 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "smartbank.client", "smartbank.client\smartbank.client.esproj", "{F909A8FB-43CC-5BA1-BFC0-46CD80464F01}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "smartbank.Server", "smartbank.Server\smartbank.Server.csproj", "{B4AE2F9B-F11E-433A-8777-C44071DD7E95}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F909A8FB-43CC-5BA1-BFC0-46CD80464F01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F909A8FB-43CC-5BA1-BFC0-46CD80464F01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F909A8FB-43CC-5BA1-BFC0-46CD80464F01}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{F909A8FB-43CC-5BA1-BFC0-46CD80464F01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F909A8FB-43CC-5BA1-BFC0-46CD80464F01}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F909A8FB-43CC-5BA1-BFC0-46CD80464F01}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{B4AE2F9B-F11E-433A-8777-C44071DD7E95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4AE2F9B-F11E-433A-8777-C44071DD7E95}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4AE2F9B-F11E-433A-8777-C44071DD7E95}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4AE2F9B-F11E-433A-8777-C44071DD7E95}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F9639E3E-AF58-4931-91F5-5CEA788025CD}
+	EndGlobalSection
+EndGlobal
