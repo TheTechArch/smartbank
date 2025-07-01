@@ -1,0 +1,8 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/src/smartbank/.vs/smartbank
+/src/smartbank/smartbank.client/obj/Debug
+/src/smartbank/smartbank.Server/bin/Debug/net9.0
+/src/smartbank/smartbank.Server/obj
