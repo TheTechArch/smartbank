@@ -7,3 +7,5 @@
 /src/smartbank/smartbank.Server/bin/Debug/net9.0
 /src/smartbank/smartbank.Server/obj
 /src/smartbank/smartbank.client/package-lock.json
+/src/smartbank/smartbank.Server/bin/Release/net9.0
+/src/smartbank/smartbank.client/obj/Release
