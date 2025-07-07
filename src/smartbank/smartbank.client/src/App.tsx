@@ -4,15 +4,26 @@ import LandingPage from './features/landingpage/LandingPage';
 import PrivateLandingPage from './features/private/loanapplication/PrivateLandingPage';
 import LoanApplicationPage from './features/private/loanapplication/LoanApplicationPage';
 import BusinessLandingPage from './features/business/BusinessLandingPage';
+import logo from './assets/smartbanklogo2-xs.png';  // adjust path as needed
 const App: React.FC = () => {
   return (
     <Router>
+
       <nav className="bg-white shadow mb-6">
-        <div className="container mx-auto px-6 py-4 flex space-x-6">
-          <Link to="/" className="text-gray-600 hover:text-blue-900">Hjem</Link>
-          <Link to="/private" className="text-gray-600 hover:text-blue-900">Privat</Link>
-          <Link to="/business" className="text-gray-600 hover:text-blue-900">Bedrift</Link>
-        </div>
+      <div className="container mx-auto px-6 py-4 flex justify-between items-end">
+            <div className="flex space-x-6">
+                <Link to="/" className="text-gray-600 hover:text-blue-900">Hjem</Link>
+                <Link to="/private" className="text-gray-600 hover:text-blue-900">Privat</Link>
+                <Link to="/business" className="text-gray-600 hover:text-blue-900">Bedrift</Link>
+            </div>
+     
+         {/* Right: logo */}
+          <img
+            src={logo}
+            alt="Bank Logo"
+            className="w-[150px] object-contain"
+          />
+             </div>
       </nav>
       <Routes>
         <Route path="/" element={<LandingPage />} />
