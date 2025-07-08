@@ -9,18 +9,18 @@ namespace smartbank.Server.Services
     {
         private readonly IResourceRegistryClient _resourceRegistryClient = resourceRegistryClient;
 
-        public Task<List<ServiceResource>> GetConsentResources(string environment, CancellationToken cancellationToken)
+        public async Task<List<ServiceResource>> GetConsentResources(string environment, CancellationToken cancellationToken)
         {
             string cacheKey = "ConsentResources" + environment;
             if (!memoryCache.TryGetValue(cacheKey, out List<ServiceResource> resources))
             {
-                resources = GetAllResources(environment, cancellationToken).Result;
+                List<ServiceResource> allResources = await GetAllResources(environment, cancellationToken);
 
-                resources = resources.Where(r => r.ResourceType == ResourceType.Consent).ToList();
+                resources = allResources.Where(r => r.ResourceType == ResourceType.Consent).ToList();
 
                 memoryCache.Set(cacheKey, resources, TimeSpan.FromMinutes(2));
             }
-            return Task.FromResult(resources);
+            return resources;
 
         }
 
