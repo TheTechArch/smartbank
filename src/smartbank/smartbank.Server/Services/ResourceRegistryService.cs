@@ -1,6 +1,34 @@
-﻿namespace smartbank.Server.Services
+﻿using Microsoft.Extensions.Caching.Memory;
+using smartbank.Server.Clients.Interface;
+using smartbank.Server.Models.ResourceRegistry;
+using smartbank.Server.Services.Interfaces;
+
+namespace smartbank.Server.Services
 {
-    public class ResourceRegistryService
+    public class ResourceRegistryService(IResourceRegistryClient resourceRegistryClient, IMemoryCache memoryCache) : IResourceRegistry
     {
+        private readonly IResourceRegistryClient _resourceRegistryClient = resourceRegistryClient;
+
+        public Task<List<ServiceResource>> GetConsentResources(string environment, CancellationToken cancellationToken)
+        {
+            string cacheKey = "ConsentResources" + environment;
+            if (!memoryCache.TryGetValue(cacheKey, out List<ServiceResource> resources))
+            {
+                resources = GetAllResources(environment, cancellationToken).Result;
+
+                resources = resources.Where(r => r.ResourceType == ResourceType.Consent).ToList();
+
+                memoryCache.Set(cacheKey, resources, TimeSpan.FromMinutes(2));
+            }
+            return Task.FromResult(resources);
+
+        }
+
+
+        private async Task<List<ServiceResource>> GetAllResources(string environment, CancellationToken cancellationToken)
+        {
+              return await  _resourceRegistryClient.GetResources(environment, cancellationToken);
+        }
+
     }
 }

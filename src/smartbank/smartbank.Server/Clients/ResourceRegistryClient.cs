@@ -18,6 +18,7 @@ namespace smartbank.Server.Clients
         private readonly HttpClient _httpClient;
         private readonly ILogger<IResourceRegistryClient> _logger;
         private readonly JsonSerializerOptions options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+        private readonly SmartBankConfig _smartbankConfig;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ResourceRegistryClient"/> class
@@ -27,7 +28,7 @@ namespace smartbank.Server.Clients
         public ResourceRegistryClient(HttpClient httpClient,  IOptions<SmartBankConfig> settings, ILogger<IResourceRegistryClient> logger)
         {
             _httpClient = httpClient;
-            SmartBankConfig platformSettings = settings.Value;
+            _smartbankConfig = settings.Value;
             _httpClient.Timeout = new TimeSpan(0, 0, 30);
             _httpClient.DefaultRequestHeaders.Clear();
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -56,7 +57,10 @@ namespace smartbank.Server.Clients
 
             try
             {
-                string endpointUrl = $"resource/search";
+                string platformUrl = GetPlatformBase(environment);
+                string endpointPath = $"resourceregistry/api/v1/resource/search";
+
+                string endpointUrl = platformUrl + endpointPath;
 
                 HttpResponseMessage response = await _httpClient.GetAsync(endpointUrl, cancellationToken);
                 if (response.StatusCode == HttpStatusCode.OK)
@@ -81,9 +85,13 @@ namespace smartbank.Server.Clients
 
             try
             {
-                string endpointUrl = $"resource/resourcelist";
+                string platformUrl = GetPlatformBase(environment);
 
-                HttpResponseMessage response = await _httpClient.GetAsync(endpointUrl, cancellationToken);
+                string endpointPath = $"resourceregistry/api/v1/resource/resourcelist";
+
+                string endpointUrl = platformUrl + endpointPath; 
+
+                HttpResponseMessage response = await _httpClient.GetAsync(platformUrl + endpointUrl, cancellationToken);
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
                     string content = await response.Content.ReadAsStringAsync(cancellationToken);
@@ -97,6 +105,31 @@ namespace smartbank.Server.Clients
             }
 
             return resources;
+        }
+
+        private string GetPlatformBase(string environment)
+        {
+            if(environment.Equals("at22", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return _smartbankConfig.AT22PlatformEndpoint;
+            }
+
+            if(environment.Equals("at23", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return _smartbankConfig.AT23PlatformEndpoint;
+            }
+
+            if(environment.Equals("at24", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return _smartbankConfig.AT24PlatformEndpoint;
+            }
+
+            if(environment.Equals("tt02", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return _smartbankConfig.TT02PlatformEndpoint;
+            }
+
+            return _smartbankConfig.AT22PlatformEndpoint;
         }
       
     }

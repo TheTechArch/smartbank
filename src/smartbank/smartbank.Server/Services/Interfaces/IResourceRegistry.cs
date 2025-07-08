@@ -4,6 +4,6 @@ namespace smartbank.Server.Services.Interfaces
 {
     public interface IResourceRegistry
     {
-        Task<List<ServiceResource>> GetConsentResources(CancellationToken cancellationToken);
+        Task<List<ServiceResource>> GetConsentResources(string environment, CancellationToken cancellationToken);
     }
 }
