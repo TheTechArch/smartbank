@@ -11,13 +11,14 @@ import {
   Checkbox,
   Fieldset,
   ErrorSummary,
-  Details,
-  DetailsSummary
+  Details
 } from '@digdir/designsystemet-react';
+
+import { GearSixIcon } from '@phosphor-icons/react';
 
 const LoanApplicationPage: React.FC = () => {
   
-  const { data: options } = useGetConsentResourcesQuery();
+  const { data: options } = useGetConsentResourcesQuery({environment: 'at22'});
   
   const [formData, setFormData] = useState({
     fullName: '',
@@ -156,17 +157,15 @@ const LoanApplicationPage: React.FC = () => {
               </Button>
             </div>
           </Fieldset>
-        </form>
 
-
-        <Details>
+                  <Details>
           <Details.Summary>
-            <Heading className="text-xl mt-8 mb-4">Select an Option</Heading>
+            <GearSixIcon size={28} /> Innstillinger for samtykke
           </Details.Summary>
             <Details.Content>
 
               <Select>
-                <option value="">Select an option</option>
+                <option value="">Velg samtykkeressurs</option>
                 {options?.map((option) => (
                   <option key={option.identifier} value={option.identifier}>
                     {option.identifier}
@@ -176,6 +175,10 @@ const LoanApplicationPage: React.FC = () => {
             </Details.Content>
 
         </Details>
+        </form>
+
+
+
       </div>
     </div>
   );

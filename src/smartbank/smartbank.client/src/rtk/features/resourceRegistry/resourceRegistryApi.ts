@@ -7,11 +7,11 @@ const apiUrl = getApiBaseUrl();
 export const resourceRegistryApi = createApi({
   reducerPath: 'resourceRegistryApi',
   baseQuery: fetchBaseQuery({ baseUrl: apiUrl }),
-  tagTypes: ['consentResourcs'],
+  tagTypes: ['consentResources'],
   endpoints: (builder) => ({
-    getConsentResources: builder.query<ServiceResource[], void>({
-      query: (body) => ({ url: 'evs/search', method: 'POST', body }),
-      providesTags: ['consentResourcs'],
+    getConsentResources: builder.query<ServiceResource[], { environment: string }>({
+      query: (arg) => ({ url: `resourceregistry/consent-resources/${arg.environment}`, method: 'GET' }),
+      providesTags: ['consentResources'],
     }),
   }),
 });

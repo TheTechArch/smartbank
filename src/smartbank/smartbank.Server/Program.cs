@@ -9,10 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 ConfigureServices(builder.Services, builder.Configuration);
 
-
 var app = builder.Build();
-
-
 
 app.UseDefaultFiles();
 app.MapStaticAssets();
@@ -24,19 +21,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseRouting();
-
 app.UseAuthorization();
-
-//// Enable CORS
-app.UseCors();
-
-//// Enable CORS
 app.UseCors();
 
 app.MapControllers();
-
 app.MapFallbackToFile("/index.html");
 
 app.Run();
@@ -44,11 +33,31 @@ app.Run();
 void ConfigureServices(IServiceCollection services, IConfiguration config)
 {
 
+    string[] allowedOrigins = new[]
+{   "https://localhost:51442",
+    "https://mydevsite.local",
+    // Add more as needed
+};
+
+    // Add CORS support
+    builder.Services.AddCors(options =>
+    {
+        options.AddDefaultPolicy(policy =>
+        {
+            policy.WithOrigins(allowedOrigins)
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials(); // Allow cookies!
+        });
+    });
+
     services.AddHttpClient<IResourceRegistryClient, ResourceRegistryClient>();
     services.AddTransient<IResourceRegistry, ResourceRegistryService>();
     services.AddControllers();
     services.AddOpenApi();
     services.AddMemoryCache();
+
+
 
     // Add other necessary services here
 }
