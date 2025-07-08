@@ -1,4 +1,8 @@
 import React, { useState } from 'react';
+
+
+import { useGetConsentResourcesQuery } from '../../../rtk/features/resourceRegistry/resourceRegistryApi';
+
 import {
   Button,
   Heading,
@@ -7,9 +11,14 @@ import {
   Checkbox,
   Fieldset,
   ErrorSummary,
+  Details,
+  DetailsSummary
 } from '@digdir/designsystemet-react';
 
 const LoanApplicationPage: React.FC = () => {
+  
+  const { data: options } = useGetConsentResourcesQuery();
+  
   const [formData, setFormData] = useState({
     fullName: '',
     nationalId: '',
@@ -24,6 +33,8 @@ const LoanApplicationPage: React.FC = () => {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+
+
     const target = e.target as HTMLInputElement | HTMLSelectElement;
     const { name, value, type } = target;
     setFormData((prev) => ({
@@ -146,6 +157,25 @@ const LoanApplicationPage: React.FC = () => {
             </div>
           </Fieldset>
         </form>
+
+
+        <Details>
+          <Details.Summary>
+            <Heading className="text-xl mt-8 mb-4">Select an Option</Heading>
+          </Details.Summary>
+            <Details.Content>
+
+              <Select>
+                <option value="">Select an option</option>
+                {options?.map((option) => (
+                  <option key={option.identifier} value={option.identifier}>
+                    {option.identifier}
+                  </option>
+                ))}
+              </Select>
+            </Details.Content>
+
+        </Details>
       </div>
     </div>
   );
