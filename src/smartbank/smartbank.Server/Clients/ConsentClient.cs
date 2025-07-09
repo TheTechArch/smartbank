@@ -75,9 +75,11 @@ namespace smartbank.Server.Clients
                 using var response = await _httpClient.SendAsync(request, cancellationToken);
                 if (!response.IsSuccessStatusCode)
                 {
+                    string errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
+
                     _logger.LogError(
                         "ConsentClient.RequestConsent failed with {StatusCode}",
-                        response.StatusCode);
+                        response.StatusCode + response.Content.ToString());
                     response.EnsureSuccessStatusCode();
                 }
 
