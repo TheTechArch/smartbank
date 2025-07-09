@@ -10,7 +10,7 @@ export default function InsuranceLandingPage() {
         <img
           src={HeroImage}
           alt="Hero Forsikring"
-          className="object-contain mb-6"
+          className="w-240 object-contain mb-6"
         />
         <h1 className="text-5xl font-extrabold mb-4">
           Er du ekstra uheldig?

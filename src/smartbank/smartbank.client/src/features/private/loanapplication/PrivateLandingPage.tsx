@@ -13,7 +13,7 @@ const PrivateLandingPage: React.FC = () => {
             <a href="#accounts" className="text-gray-600 hover:text-blue-900">Kontoer</a>
             <a href="/private/loanapplication" className="text-gray-600 hover:text-blue-900">Lån</a>
             <a href="/private/insurance" className="text-gray-600 hover:text-blue-900">Forsikring</a>
-            <a href="#offers" className="text-gray-600 hover:text-blue-900">Tilbud</a>
+            <a href="/private/creditcard" className="text-gray-600 hover:text-blue-900">Kredittkort</a>
           </nav>
         </div>
       </header>
