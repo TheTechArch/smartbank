@@ -1,5 +1,6 @@
 using smartbank.Server.Clients;
 using smartbank.Server.Clients.Interface;
+using smartbank.Server.Config;
 using smartbank.Server.Services;
 using smartbank.Server.Services.Interfaces;
 
@@ -50,8 +51,10 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
                   .AllowCredentials(); // Allow cookies!
         });
     });
-
+    services.Configure<MaskinportenConfig>(config.GetSection("Maskinporten"));
+    services.Configure<ConsentConfig>(config.GetSection("Consent"));
     services.AddHttpClient<IResourceRegistryClient, ResourceRegistryClient>();
+    services.AddHttpClient<IMaskinportenClient, MaskinportenClient>();
     services.AddTransient<IResourceRegistry, ResourceRegistryService>();
     services.AddControllers();
     services.AddOpenApi();
