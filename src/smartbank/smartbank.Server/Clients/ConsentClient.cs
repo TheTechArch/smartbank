@@ -43,7 +43,7 @@ namespace smartbank.Server.Clients
         {
             try
             {
-                TokenResponse? tokenResponse = await _maskinportenClient.GetToken("");
+                TokenResponse? tokenResponse = await _maskinportenClient.GetToken("altinn:consentrequests.write");
 
                 if( tokenResponse == null || string.IsNullOrEmpty(tokenResponse.AccessToken))
                 {

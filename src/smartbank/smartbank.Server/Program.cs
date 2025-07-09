@@ -54,6 +54,7 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
     services.Configure<MaskinportenConfig>(config.GetSection("Maskinporten"));
     services.Configure<ConsentConfig>(config.GetSection("Consent"));
     services.AddHttpClient<IResourceRegistryClient, ResourceRegistryClient>();
+    services.AddHttpClient<IConsentClient, ConsentClient>();
     services.AddHttpClient<IMaskinportenClient, MaskinportenClient>();
     services.AddTransient<IResourceRegistry, ResourceRegistryService>();
     services.AddControllers();
