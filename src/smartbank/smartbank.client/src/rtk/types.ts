@@ -63,3 +63,23 @@ export type AuthorizationReferenceAttribute = {
     id: string;
     value: string;
 };
+
+export type ConsentRequestBff = {
+    offeredBy: string;
+    onBehalfOf?: string;
+    consentRightBFFs: ConsentRightBFF[];
+    requestMessage: string;
+    environment: string;
+};
+
+export type ConsentRightBFF = {
+    resourceId: string;
+    metadata: Record<string, string>;
+    action?: string; // defaults to "consent" if not provided
+};
+
+
+export type ConsentRequestResultBff = {
+    id: string; // Guid as string
+    consentUrl: string;
+};

@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import type { ServiceResource } from '../../types';
+import type { ConsentRequestResultBff } from '../../types';
+import type { ConsentRequestBff } from '../../types';
 import { getApiBaseUrl } from '../../../resources/utils/ApiUrlUtil';
 
 const apiUrl = getApiBaseUrl();
@@ -7,17 +8,17 @@ const apiUrl = getApiBaseUrl();
 export const resourceRegistryApi = createApi({
   reducerPath: 'resourceRegistryApi',
   baseQuery: fetchBaseQuery({ baseUrl: apiUrl }),
-  tagTypes: ['consentResources'],
+  tagTypes: ['consentRequests'],
   endpoints: (builder) => ({
-    getConsentResources: builder.query<ServiceResource[], { environment: string }>({
-      query: (arg) => ({ url: `resourceregistry/consent-resources/${arg.environment}`, method: 'GET' }),
-      providesTags: ['consentResources'],
+    CreateConsentRequest: builder.mutation<ConsentRequestResultBff, ConsentRequestBff>({
+      query: (arg) => ({ url: `consent`, method: 'POST', body: arg }),
+      invalidatesTags: ['consentRequests'],
     }),
   }),
 });
 
 export const {
- useGetConsentResourcesQuery
+  useCreateConsentRequestMutation
 } = resourceRegistryApi;
 
 export const { endpoints, reducerPath, reducer, middleware } = resourceRegistryApi;

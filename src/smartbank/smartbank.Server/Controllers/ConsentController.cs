@@ -15,7 +15,7 @@ namespace smartbank.Server.Controllers
         private readonly IConsentClient _consentClient = consentClient;
         private readonly ConsentConfig _consentConfig = consentConfig.Value;
 
-        [HttpGet("test")]
+        [HttpPost()]
         public async Task<IActionResult> RequestConsent(ConsentRequestBff consentRequestBff, CancellationToken cancellationToken)
         {
             try
@@ -52,9 +52,17 @@ namespace smartbank.Server.Controllers
                     RedirectUrl =  "https:smartbankdemo.azurewebsites.net",
                 };
 
-                var consent = await _consentClient.RequestConsent(dto, consentRequestBff.Environment, cancellationToken);
+                ConsentRequestDetailsDto consent = await _consentClient.RequestConsent(dto, consentRequestBff.Environment, cancellationToken);
 
-                return Ok("Got token");
+
+
+                ConsentRequestResultBff result = new ConsentRequestResultBff()
+                {
+                    ConsentUrl = consent.ViewUri,
+                    Id = consent.Id
+                };
+
+                return Ok(result);
             }
             catch (Exception ex)
             {

@@ -39,7 +39,7 @@ namespace smartbank.Server.Clients
             _maskinportenClient = maskinportenClient;
         }
 
-        public async Task<ConsentRequestStatusDto> RequestConsent(ConsentRequestDto consentRequestDetailsDto, string environment, CancellationToken cancellationToken = default)
+        public async Task<ConsentRequestDetailsDto> RequestConsent(ConsentRequestDto consentRequestDetailsDto, string environment, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -83,7 +83,7 @@ namespace smartbank.Server.Clients
 
                 // 7. Deserialize with System.Text.Json
                 using var contentStream = await response.Content.ReadAsStreamAsync(cancellationToken);
-                var result = await JsonSerializer.DeserializeAsync<ConsentRequestStatusDto>(
+                var result = await JsonSerializer.DeserializeAsync<ConsentRequestDetailsDto>(
                     contentStream, jsonOptions, cancellationToken);
 
                 return result!;
