@@ -9,3 +9,6 @@
 /src/smartbank/smartbank.client/package-lock.json
 /src/smartbank/smartbank.Server/bin/Release/net9.0
 /src/smartbank/smartbank.client/obj/Release
+src/smartbank/.vs/ProjectEvaluation/smartbank.metadata.v9.bin
+src/smartbank/.vs/ProjectEvaluation/smartbank.projects.v9.bin
+src/smartbank/.vs/ProjectEvaluation/smartbank.strings.v9.bin
