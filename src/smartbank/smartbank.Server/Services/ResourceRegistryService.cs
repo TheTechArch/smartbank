@@ -17,7 +17,6 @@ namespace smartbank.Server.Services
                 List<ServiceResource> allResources = await GetAllResources(environment, cancellationToken);
 
                 resources = allResources.Where(r => r.ResourceType == ResourceType.Consent).ToList();
-                resources.AddRange(allResources.Where(r => r.Identifier == "ttd-consent-test3").ToList());
                 memoryCache.Set(cacheKey, resources, TimeSpan.FromMinutes(2));
             }
             return resources;
