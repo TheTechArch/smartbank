@@ -1,30 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { useGetConsentResourcesQuery } from '../../../rtk/features/resourceRegistry/resourceRegistryApi';
 import { useCreateConsentRequestMutation } from '../../../rtk/features/resourceRegistry/consentApi';
-import { Button, Textfield, Select, Fieldset } from '@digdir/designsystemet-react';
-import type { ServiceResource, ConsentRequestBff, ConsentRightBFF } from '../../../rtk/types';
+import { Button, Textfield, Select, Fieldset, Link } from '@digdir/designsystemet-react';
+import type {
+  ServiceResource,
+  ConsentRequestBff,
+  ConsentRightBFF,
+  ConsentRequestResultBff
+} from '../../../rtk/types';
 
-
-export type ContactPoint = { category: string; email: string; telephone: string; contactPage: string; };
-export type ResourceReference = { referenceSource?: string; reference?: string; referenceType?: string; };
-export type CompetentAuthorityReference = { organization: string; orgcode: string; };
-export type CompetentAuthority = CompetentAuthorityReference & { name: Record<string, string>; };
-export type Keyword = { word: string; language: string; };
-export type ConsentMetadata = { optional: boolean; };
-export type AuthorizationReferenceAttribute = { id: string; value: string; };
-
-    const SimplifiedConsentRequestPage: React.FC = () => {
+const SimplifiedConsentRequestPage: React.FC = () => {
+  // Fetch available resources
   const { data: resources } = useGetConsentResourcesQuery({ environment: 'at22' });
-  const [createConsentRequest, { isLoading, isSuccess, error }] = useCreateConsentRequestMutation();
 
+  // Mutation hook
+  const [createConsentRequest, { isLoading, isError }] = useCreateConsentRequestMutation();
+
+  // Form state
   const [offeredBy, setOfferedBy] = useState('');
   const [resourceId, setResourceId] = useState('');
   const [metadataValues, setMetadataValues] = useState<Record<string, string>>({});
+  const [consentUrl, setConsentUrl] = useState<string | null>(null);
 
-  // Find selected resource
+  // Find the full resource object when user selects one
   const selectedResource = resources?.find((r: ServiceResource) => r.identifier === resourceId);
 
-  // Initialize metadata inputs when resource changes
+  // (Re)initialize metadata inputs when resource changes, and clear the old URL
   useEffect(() => {
     if (selectedResource?.consentMetadata) {
       const init: Record<string, string> = {};
@@ -35,14 +36,18 @@ export type AuthorizationReferenceAttribute = { id: string; value: string; };
     } else {
       setMetadataValues({});
     }
+    setConsentUrl(null);
   }, [selectedResource]);
 
+  // Track changes to each metadata field
   const handleMetadataChange = (key: string, value: string) => {
     setMetadataValues((prev) => ({ ...prev, [key]: value }));
   };
 
+  // Submit handler
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     const right: ConsentRightBFF = {
       resourceId,
       metadata: metadataValues,
@@ -57,15 +62,18 @@ export type AuthorizationReferenceAttribute = { id: string; value: string; };
     };
 
     try {
-      await createConsentRequest(payload).unwrap();
-    } catch {
-      // handle error
+      const result: ConsentRequestResultBff = await createConsentRequest(payload).unwrap();
+      console.log('Consent API returned URL:', result.consentUrl);
+      setConsentUrl(result.consentUrl);
+    } catch (err) {
+      console.error('Consent request failed', err);
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="max-w-lg mx-auto p-6 bg-white rounded-lg">
       <Fieldset>
+        {/* National ID input */}
         <Textfield
           label="National ID"
           name="nationalId"
@@ -73,6 +81,7 @@ export type AuthorizationReferenceAttribute = { id: string; value: string; };
           onChange={(e) => setOfferedBy(e.target.value)}
         />
 
+        {/* Resource selector */}
         <Select
           name="resourceId"
           value={resourceId}
@@ -99,14 +108,26 @@ export type AuthorizationReferenceAttribute = { id: string; value: string; };
             />
           ))}
 
+        {/* Submit */}
         <div className="mt-4 flex justify-end">
           <Button type="submit" variant="primary" disabled={isLoading}>
             {isLoading ? 'Submitting...' : 'Submit'}
           </Button>
         </div>
 
-        {isSuccess && <p className="text-green-600 mt-2">Submitted successfully!</p>}
-        {error && <p className="text-red-600 mt-2">Submission failed.</p>}
+        {/* Show the returned consentUrl */}
+        {consentUrl && (
+          <div className="mt-4">
+            <Link href={consentUrl} target="_blank">
+              👉 Complete your consent here
+            </Link>
+          </div>
+        )}
+
+        {/* Error message */}
+        {isError && (
+          <p className="text-red-600 mt-2">Submission failed—please try again.</p>
+        )}
       </Fieldset>
     </form>
   );
