@@ -42,19 +42,24 @@ namespace smartbank.Server.Controllers
                     consentRights.Add(consentRight);
                 }
 
+                Guid consentID = Guid.NewGuid();
+
                 ConsentRequestDto dto = new()
                 {
-                    Id = Guid.NewGuid(),
+                    Id = consentID,
                     To = coveredBy,
                     From = offeredFrom,
                     ValidTo = DateTimeOffset.UtcNow.AddYears(1),
                     ConsentRights = consentRights,
-                    RedirectUrl =  "https:smartbankdemo.azurewebsites.net",
+                    RedirectUrl = $"https://smartbankdemo.azurewebsites.net/private/loanapplicationresult?requestId={consentID}",
                 };
 
                 ConsentRequestDetailsDto consent = await _consentClient.RequestConsent(dto, consentRequestBff.Environment, cancellationToken);
 
-
+                if(!consent.ViewUri.Contains("DONTCHOOSE"))
+                {
+                    consent.ViewUri = consent.ViewUri + "&DONTCHOOSEREPORTEE=true";
+                }
 
                 ConsentRequestResultBff result = new ConsentRequestResultBff()
                 {
