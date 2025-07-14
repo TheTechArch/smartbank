@@ -9,7 +9,8 @@ import {
   Link,
   Details,
   Field,
-  Label
+  Label,
+  Paragraph
 } from '@digdir/designsystemet-react';
 import type {
   ServiceResource,
@@ -75,6 +76,31 @@ const SimplifiedConsentRequestPage: React.FC = () => {
 
   return (
     <form className="max-w-lg mx-auto p-6 bg-white rounded-lg" onSubmit={handleSubmit}>
+
+<Paragraph className="mb-4">
+  Denne siden demonstrerer bruk av Altinn-samtykke i Altinn 3-plattformen. Du kan:
+
+<ul className="list-disc list-inside mb-2">
+  <li className="mb-1"></li>
+  <li className="mb-1">Opprette en samtykkeforespørsel for en tjeneste som krever samtykke.</li>
+  <li className="mb-1">Velge hvilket miljø (test eller produksjon) forespørselen skal sendes til.</li>
+  <li className="mb-1">Angi fødselsnummer eller organisasjonsnummer for den parten som skal gi samtykke.</li>
+</ul>
+
+<p className="mb-2">
+  Når forespørselen er sendt, får du en lenke som åpnes i et nytt vindu. Der bekrefter du samtykket i Altinn for det valgte miljøet. Etter at samtykket er gitt, sendes du tilbake til denne applikasjonen, som:
+</p>
+
+<ul className="list-disc list-inside mb-2">
+  <li className="mb-1">Sjekker status på forespørselen</li>
+  <li className="mb-1">Henter ut samtykketoken</li>
+</ul>
+
+Hvis alt er i orden, brukes tokenet til å kalle et API som validerer samtykket.
+
+
+</Paragraph>
+
       <Fieldset>
         <Textfield
           label="National ID"
