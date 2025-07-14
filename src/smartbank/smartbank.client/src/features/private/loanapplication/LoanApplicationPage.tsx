@@ -18,20 +18,20 @@ import type {
 } from '../../../rtk/types';
 
 const SimplifiedConsentRequestPage: React.FC = () => {
+  // form state
+  const [offeredBy, setOfferedBy] = useState('');
+  const [resourceId, setResourceId] = useState('');
+  const [environment, setEnvironment] = useState('at22');
+  const [metadataValues, setMetadataValues] = useState<Record<string, string>>({});
+
   // 1) fetch the list of resources
-  const { data: resources } = useGetConsentResourcesQuery({ environment: 'at22' });
+  const { data: resources } = useGetConsentResourcesQuery({ environment });
 
   // 2) our createConsentRequest hook — note that we now pull `data`, `isSuccess`, etc.
   const [
     createConsentRequest,
     { data: result, isLoading, isError, isSuccess },
   ] = useCreateConsentRequestMutation();
-
-  // form state
-  const [offeredBy, setOfferedBy] = useState('');
-  const [resourceId, setResourceId] = useState('');
-  const [environment, setEnvironment] = useState('at22');
-  const [metadataValues, setMetadataValues] = useState<Record<string, string>>({});
 
   // find the full resource so we can render its metadata fields
   const selectedResource = resources?.find((r) => r.identifier === resourceId);
@@ -66,7 +66,7 @@ const SimplifiedConsentRequestPage: React.FC = () => {
       offeredBy,
       consentRightBFFs: [right],
       requestMessage: 'Please grant consent',
-      environment: 'at22',
+      environment: environment,
     };
 
     // fire & forget — the hook will populate `result` & flip `isSuccess`
