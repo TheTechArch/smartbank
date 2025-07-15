@@ -6,6 +6,7 @@ import LoanApplicationPage from './features/private/loanapplication/LoanApplicat
 import BusinessLandingPage from './features/business/BusinessLandingPage';
 import InsuranceLandingPage from './features/private/InsuranceLandingPage';
 import CreditCardPage from './features/private/creditcard/CreditCard';
+import ConsentResultPage from './features/private/loanapplication/ConsentResult';
 import logo from './assets/smartbanklogo2-xs.png';  // adjust path as needed
 const App: React.FC = () => {
   return (
@@ -34,6 +35,7 @@ const App: React.FC = () => {
         <Route path="/private/insurance" element={<InsuranceLandingPage />} />
         <Route path="/private/creditcard" element={<CreditCardPage />} />
         <Route path="/business" element={<BusinessLandingPage />} />
+        <Route path="/private/loanapplication/consentresult" element={<ConsentResultPage />} />
       </Routes>
     </Router>
   );

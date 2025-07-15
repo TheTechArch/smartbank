@@ -51,7 +51,7 @@ namespace smartbank.Server.Controllers
                     From = offeredFrom,
                     ValidTo = DateTimeOffset.UtcNow.AddYears(1),
                     ConsentRights = consentRights,
-                    RedirectUrl = $"https://smartbankdemo.azurewebsites.net/private/loanapplicationresult?requestId={consentID}&environment={consentRequestBff.Environment}",
+                    RedirectUrl = $"https://smartbankdemo.azurewebsites.net/private/loanapplication/consentresult?requestId={consentID}&environment={consentRequestBff.Environment}",
                 };
 
                 ConsentRequestDetailsDto consent = await _consentClient.RequestConsent(dto, consentRequestBff.Environment, cancellationToken);
@@ -79,7 +79,7 @@ namespace smartbank.Server.Controllers
 
 
         [HttpGet("{consentId}")]
-        public async Task<IActionResult> GetConsentRequest(Guid consentId, string environment, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetConsentRequest(Guid consentId, [FromQuery] string environment, CancellationToken cancellationToken)
         {
             try
             {

@@ -66,7 +66,7 @@ namespace smartbank.Server.Clients
 
 
                 // 4. Create the request message
-                using var request = new HttpRequestMessage(HttpMethod.Post, endpointUrl)
+                using var request = new HttpRequestMessage(HttpMethod.Get, endpointUrl)
                 {
                 };
 
