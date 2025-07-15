@@ -75,7 +75,7 @@ const SimplifiedConsentRequestPage: React.FC = () => {
   };
 
   return (
-    <form className="max-w-lg mx-auto p-6 bg-white rounded-lg" onSubmit={handleSubmit}>
+    <form className="max-w-3xl mx-auto p-6 bg-white rounded-lg" onSubmit={handleSubmit}>
 
 <Paragraph className="mb-4">
   Denne siden demonstrerer bruk av Altinn-samtykke i Altinn 3-plattformen. Du kan:
@@ -103,47 +103,43 @@ Hvis alt er i orden, brukes tokenet til å kalle et API som validerer samtykket.
 
       <Fieldset>
         <Textfield
-          label="National ID"
+          label="Personnummer eller organisasjonsnummer for den som skal gi samtykke"
           name="nationalId"
           value={offeredBy}
           onChange={(e) => setOfferedBy(e.target.value)}
         />
 
        <Details>
-        <Details.Summary>Consent Request Details</Details.Summary>
-
+        <Details.Summary>Samtykke detaljer</Details.Summary>
           <Details.Content>
-
-
-    <Field>
-      <Label>Samtykkeressurs</Label>
-        <Select
-          name="environment"
-          value={environment}
-          onChange={(e) => setEnvironment(e.target.value)}
-        >
-          <option value="at22">AT22</option>
-          <option value="at23">AT23</option>
-          <option value="at24">AT24</option>
-          <option value="tt02">TT02</option>
-        </Select>
-    </Field>
-
-    <Field>
-      <Label>Samtykkeressurs som brukes i samtykke</Label>
-        <Select
-          name="resourceId"
-          value={resourceId}
-          onChange={(e) => setResourceId(e.target.value)}
-        >
-          <option value="">-- Velg samtykkeresssurs --</option>
-          {resources?.map((res: ServiceResource) => (
-            <option key={res.identifier} value={res.identifier}>
-              {res.identifier}
-            </option>
-          ))}
-        </Select>
-    </Field>
+            <Field>
+              <Label>Samtykkeressurs</Label>
+                <Select
+                  name="environment"
+                  value={environment}
+                  onChange={(e) => setEnvironment(e.target.value)}
+                >
+                  <option value="at22">AT22</option>
+                  <option value="at23">AT23</option>
+                  <option value="at24">AT24</option>
+                  <option value="tt02">TT02</option>
+                </Select>
+            </Field>
+            <Field>
+              <Label>Samtykkeressurs som brukes i samtykke</Label>
+                <Select
+                  name="resourceId"
+                  value={resourceId}
+                  onChange={(e) => setResourceId(e.target.value)}
+                >
+                  <option value="">-- Velg samtykkeresssurs --</option>
+                  {resources?.map((res: ServiceResource) => (
+                    <option key={res.identifier} value={res.identifier}>
+                      {res.identifier}
+                    </option>
+                  ))}
+                </Select>
+            </Field>
 
     <Fieldset className="mt-4">
         {selectedResource?.consentMetadata &&

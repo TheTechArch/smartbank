@@ -25,7 +25,7 @@ namespace smartbank.Server.Controllers
 
                 List<ConsentRightDto> consentRights = [];
 
-                foreach(var right in consentRequestBff.consentRightBFFs)
+                foreach (var right in consentRequestBff.consentRightBFFs)
                 {
                     ConsentRightDto consentRight = new()
                     {
@@ -51,12 +51,12 @@ namespace smartbank.Server.Controllers
                     From = offeredFrom,
                     ValidTo = DateTimeOffset.UtcNow.AddYears(1),
                     ConsentRights = consentRights,
-                    RedirectUrl = $"https://smartbankdemo.azurewebsites.net/private/loanapplicationresult?requestId={consentID}",
+                    RedirectUrl = $"https://smartbankdemo.azurewebsites.net/private/loanapplicationresult?requestId={consentID}&environment={consentRequestBff.Environment}",
                 };
 
                 ConsentRequestDetailsDto consent = await _consentClient.RequestConsent(dto, consentRequestBff.Environment, cancellationToken);
 
-                if(!consent.ViewUri.Contains("DONTCHOOSE"))
+                if (!consent.ViewUri.Contains("DONTCHOOSE"))
                 {
                     consent.ViewUri = consent.ViewUri + "&DONTCHOOSEREPORTEE=true";
                 }
@@ -75,6 +75,26 @@ namespace smartbank.Server.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing your request.");
             }
 
+        }
+
+
+        [HttpGet("{consentId}")]
+        public async Task<IActionResult> GetConsentRequest(Guid consentId, string environment, CancellationToken cancellationToken)
+        {
+            try
+            {
+                ConsentRequestDetailsDto consent = await _consentClient.GetRequest(consentId, environment, cancellationToken);
+                if (consent == null)
+                {
+                    return NotFound();
+                }
+                return Ok(consent);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (not shown here for brevity)
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing your request.");
+            }
         }
     }
 }
