@@ -5,15 +5,21 @@ using Microsoft.Extensions.Options;
 using smartbank.Server.Clients.Interface;
 using smartbank.Server.Config;
 using smartbank.Server.Models.Consent;
+using smartbank.Server.Models.Maskinporten;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Xml;
 
 namespace smartbank.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ConsentController(IConsentClient consentClient, IOptions<ConsentConfig> consentConfig) : ControllerBase
+    public class ConsentController(IConsentClient consentClient, IOptions<ConsentConfig> consentConfig, IMaskinportenClient maskinportenClient) : ControllerBase
     {
         private readonly IConsentClient _consentClient = consentClient;
         private readonly ConsentConfig _consentConfig = consentConfig.Value;
+        private readonly IMaskinportenClient _maskinportenClient = maskinportenClient;
 
         [HttpPost()]
         public async Task<IActionResult> RequestConsent(ConsentRequestBff consentRequestBff, CancellationToken cancellationToken)
@@ -89,6 +95,70 @@ namespace smartbank.Server.Controllers
                     return NotFound();
                 }
                 return Ok(consent);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (not shown here for brevity)
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing your request.");
+            }
+        }
+
+
+
+        [HttpGet("token/{consentId}")]
+        public async Task<IActionResult> GetConsentToken(Guid consentId, [FromQuery] string environment, CancellationToken cancellationToken)
+        {
+            try
+            {
+                string scope = "altinn:consentrequests.read";
+
+                ConsentRequestDetailsDto consent = await _consentClient.GetRequest(consentId, environment, cancellationToken);
+
+                TokenResponse? token = null;
+
+                if (consent.From.IsPersonId(out PersonIdentifier personIdentifier))
+                {
+                    token = await _maskinportenClient.GetConsentToken(scope, personIdentifier.ToString(), consentId.ToString());
+                }
+                else if(consent.From.IsOrganizationId(out OrganizationIdentifier organizationIdentifier))
+                {
+                    token = await _maskinportenClient.GetConsentToken(scope, organizationIdentifier.ToString(), consentId.ToString());
+                }
+
+
+                if(token != null)
+                {
+                    var handler = new JwtSecurityTokenHandler();
+                    var jwt = handler.ReadJwtToken(token.AccessToken);
+
+                    // 2) Serialize header & payload with System.Text.Json
+                    var jsonOpts = new JsonSerializerOptions
+                    {
+                        WriteIndented = true,
+                        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+                    };
+
+                    string headerJson = JsonSerializer.Serialize(jwt.Header, jsonOpts);
+                    string payloadJson = JsonSerializer.Serialize(jwt.Payload, jsonOpts);
+
+                    // 3) If you want a strongly-typed dictionary of claims:
+                    var claimsDict = jwt.Claims
+                        .GroupBy(c => c.Type)
+                        .ToDictionary(
+                            g => g.Key,
+                            g => g.Select(c => c.Value).ToArray()  // array in case of multi-valued claims
+                        );
+
+                    return Ok(new
+                    {
+                        // rawToken = token.AccessToken,
+                        header = JsonDocument.Parse(headerJson).RootElement,   // returns a JsonElement
+                        payload = JsonDocument.Parse(payloadJson).RootElement,
+                    });
+                }
+
+
+                return NotFound();
             }
             catch (Exception ex)
             {

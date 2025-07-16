@@ -21,5 +21,7 @@ namespace smartbank.Server.Clients.Interface
 
 
         Task<TokenResponse?> GetToken(string base64EncodedJWK, string environment, string clientId, string scope);
+
+        Task<TokenResponse?> GetConsentToken(string scope, string offeredBy, string consentId);
     }
 }

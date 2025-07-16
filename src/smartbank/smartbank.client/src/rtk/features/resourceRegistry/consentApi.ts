@@ -8,7 +8,7 @@ const apiUrl = getApiBaseUrl();
 export const consentApi = createApi({
   reducerPath: 'consentApi',
   baseQuery: fetchBaseQuery({ baseUrl: apiUrl }),
-  tagTypes: ['consentRequests', 'consentStatus'],
+  tagTypes: ['consentRequests', 'consentStatus', 'consentToken'],
   endpoints: (builder) => ({
     CreateConsentRequest: builder.mutation<ConsentRequestResultBff, ConsentRequestBff>({
       query: (arg) => ({ url: `consent`, method: 'POST', body: arg }),
@@ -18,12 +18,17 @@ export const consentApi = createApi({
       query: ({ id, environment }) => ({url: `consent/${id}?environment=${environment}`, method: 'GET'}),
        providesTags: ['consentStatus'],
     }),
+    GetConsentToken: builder.query<any, { id: string, environment: string}>({
+      query: ({ id, environment }) => ({url: `consent/token/${id}?environment=${environment}`, method: 'GET'}),
+       providesTags: ['consentToken'],
+    }),
   }),
 });
 
 export const {
   useCreateConsentRequestMutation,
-  useGetConsentRequestQuery,        
+  useGetConsentRequestQuery, 
+  useGetConsentTokenQuery       
 } = consentApi;
 
 export const { endpoints, reducerPath, reducer, middleware } = consentApi;

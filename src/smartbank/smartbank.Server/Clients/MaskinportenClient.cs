@@ -61,6 +61,13 @@ namespace smartbank.Server.Clients
             return await GetToken(jwk, environment, clientId, scope, systemUserOrgno);
         }
 
+        public async Task<TokenResponse?> GetConsentToken(string scope, string offeredBy, string consentId)
+        {
+             byte[] base64EncodedBytes = Convert.FromBase64String(_maskinPortenConfig.EncodedJwk);
+             string jwkjson = Encoding.UTF8.GetString(base64EncodedBytes);
+             JsonWebKey jwk = new JsonWebKey(jwkjson);
+             return await GetConsentToken(jwk, _maskinPortenConfig.Environment, _maskinPortenConfig.ClientId, scope, offeredBy, consentId);
+        }
 
         public async Task<TokenResponse?> GetToken(string base64EncodedJwk, string environment, string clientId, string scope)
         {
@@ -84,6 +91,16 @@ namespace smartbank.Server.Clients
         {
             TokenResponse? accesstokenResponse;
             string jwtAssertion = GetJwtAssertion(jwk, environment, clientId, scope, systemUserOrgno);
+            FormUrlEncodedContent content = GetUrlEncodedContent(jwtAssertion);
+            accesstokenResponse = await PostToken(environment, content);
+            return accesstokenResponse;
+        }
+
+
+        private async Task<TokenResponse?> GetConsentToken(JsonWebKey jwk, string environment, string clientId, string scope, string offeredBy, string consentId)
+        {
+            TokenResponse? accesstokenResponse;
+            string jwtAssertion = GetConsentJwtAssertion(jwk, environment, clientId, scope, offeredBy, consentId);
             FormUrlEncodedContent content = GetUrlEncodedContent(jwtAssertion);
             accesstokenResponse = await PostToken(environment, content);
             return accesstokenResponse;
@@ -147,6 +164,73 @@ namespace smartbank.Server.Clients
 
             return handler.WriteToken(securityToken);
         }
+
+        private string GetConsentJwtAssertion(JsonWebKey jwk, string environment, string clientId, string scope, string offeredBy, string consentId)
+        {
+            DateTimeOffset dateTimeOffset = new DateTimeOffset(DateTime.UtcNow);
+
+            /// Create the JWT header with signature using the JWK. This is the code that create proof that client has private key for the Integration in Maskinporten
+            JwtHeader header = GetHeader(jwk);
+
+            /// Create the JWT payload in JWT Grant. This is the same content as a regular Maskinporten token
+            JwtPayload payload = new JwtPayload
+            {
+                { "aud", GetAssertionAud(environment) },
+                { "scope", scope },
+                { "iss", clientId },
+                { "exp", dateTimeOffset.ToUnixTimeSeconds() + 10 },
+                { "iat", dateTimeOffset.ToUnixTimeSeconds() },
+                { "jti", Guid.NewGuid().ToString() },
+            };
+
+            /// Add the authorization_details in JWT Grant to support systemuser if systemUserOrgno is provided
+            if (!string.IsNullOrEmpty(offeredBy) && offeredBy.Length.Equals(9))
+            {
+                /// Add the systemuser_org in the authorization_details. This is the organization that has created a connection between their system user and the system in Altinn System Register
+                JwtPayload systemUserOrg = new JwtPayload
+                {
+                    { "authority", "iso6523-actorid-upis" },
+                    { "ID", $"0192:{offeredBy}" },
+                };
+
+                /// Add the authorization_details in JWT Grant to support systemuser
+                JwtPayload authorizationDetail = new JwtPayload()
+                {
+                    { "systemuser_org", systemUserOrg },
+                    { "type" , "urn:altinn:systemuser"}
+                };
+
+                List<JwtPayload> authorizationDetails = new List<JwtPayload>
+                {
+                    authorizationDetail
+                };
+
+                payload.Add("authorization_details", authorizationDetails);
+            }
+            else if (!string.IsNullOrEmpty(offeredBy) && offeredBy.Length.Equals(11))
+            {
+                /// Add the authorization_details in JWT Grant to support systemuser
+                JwtPayload authorizationDetail = new JwtPayload()
+                {
+                    { "from", $"urn:altinn:person:identifier-no:{offeredBy}" },
+                    { "id" , $"{consentId}"},
+                    { "type" , "urn:altinn:consent"}
+                };
+
+                List<JwtPayload> authorizationDetails = new List<JwtPayload>
+                {
+                    authorizationDetail
+                };
+
+                payload.Add("authorization_details", authorizationDetails);
+            }
+
+            JwtSecurityToken securityToken = new JwtSecurityToken(header, payload);
+            JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
+
+            return handler.WriteToken(securityToken);
+        }
+
 
         private JwtHeader GetHeader(JsonWebKey jwk)
         {
