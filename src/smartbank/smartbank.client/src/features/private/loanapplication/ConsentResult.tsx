@@ -1,6 +1,7 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';        // if you’re using react-router
 import { useGetConsentRequestQuery, useGetConsentTokenQuery } from '../../../rtk/features/resourceRegistry/consentApi';
+import { Details } from '@digdir/designsystemet-react';
 
 const ConsentResultPage: React.FC = () => {
   // 1. grab the raw query string
@@ -44,13 +45,24 @@ const ConsentResultPage: React.FC = () => {
   }
 
   return (
-    <div>
-      <h1>Consent Result</h1>
-      <p>Your consent request has been processed.</p>
+    <div className="max-w-3xl mx-auto px-4">
+      <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-6">Samtykke resultat</h1>
+      <p>Samtykket har nå blitt bekreftet eller avvist. Nedenfor finner du detaljer om samtykkeforsel og token hvis akseptert og samtykket er</p>
       {/* present whatever data shape your API returns */}
-      <pre>{JSON.stringify(data, null, 2)}</pre>
+      <Details>
+        <Details.Summary>Request Details</Details.Summary>
+        <Details.Content>
+          <pre>{JSON.stringify(data, null, 2)}</pre>
+        </Details.Content>
+      </Details>
+    <Details>
+        <Details.Summary>Token details</Details.Summary>
+        <Details.Content>
+            <pre>{JSON.stringify(tokenData, null, 2)}</pre>
+        </Details.Content>
+      </Details>
 
-      <pre>{JSON.stringify(tokenData, null, 2)}</pre>
+ 
     </div>
   );
 };
